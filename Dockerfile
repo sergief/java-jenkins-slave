@@ -11,19 +11,13 @@ RUN apt-get update && \
     git \
     gettext-base
 
-USER jenkins
-
 COPY settings.xml.tmpl /home/jenkins/settings.xml.tmpl
-
-ENV GIT_USER_EMAIL "sergief@users.noreply.github.com"
-ENV GIT_USER_NAME "Jenkins"
 
 ENV NEXUS_USERNAME "\${env.M2_CREDENTIALS_USR}"
 ENV NEXUS_PASSWORD "\${env.M2_CREDENTIALS_PSW}"
 ENV NEXUS_MAVEN_PUBLIC_URL "\${env.M2_MIRROR_CENTRAL}"
 
-RUN git config --global user.email "${GIT_USER_EMAIL}" && \
-  git config --global user.name "${GIT_USER_NAME}" && \
-  mkdir -p /home/jenkins/.m2 && \
-  envsubst < /home/jenkins/settings.xml.tmpl > /home/jenkins/.m2/settings.xml && \
+RUN envsubst < /home/jenkins/settings.xml.tmpl > /etc/maven/settings.xml && \
   rm /home/jenkins/settings.xml.tmpl
+
+USER jenkins
